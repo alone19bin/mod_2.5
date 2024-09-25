@@ -25,11 +25,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUsername(username);
-       if (user == null) {
-           throw new UsernameNotFoundException("User with username: "  + "username" + " not found");
-       }
+        if (user == null) {
+            throw new UsernameNotFoundException("User with username: " + username + " not found");
+        }
         JwtUser jwtUser = JwtUserFactory.create(user);
         log.info("loadUserByUsername - user with username: {} successfully loaded", username);
         return jwtUser;
     }
 }
+

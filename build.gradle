@@ -29,16 +29,14 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
 
-    // Обновлённые зависимости для JJWT
+    //зависимости для JJWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // AWS SDK для S3
+    //      AWS SDKS3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
 
-    // (Необязательно) Apache HttpComponents, если используете org.apache.http.HttpStatus
-    // implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok'
@@ -50,7 +48,5 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+
 

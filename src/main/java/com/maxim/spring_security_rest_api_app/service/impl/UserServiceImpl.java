@@ -6,6 +6,7 @@ import com.maxim.spring_security_rest_api_app.repository.UserRepository;
 import com.maxim.spring_security_rest_api_app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,31 +17,27 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private  UserRepository userRepository;
-    private  BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    public UserServiceImpl(UserRepository userRepository) {
 
-    }
     @Override
     public User getById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            log.warn("FindById - no User find by id: {}", id);
-        }
-        log.info("Find User by id: {}", id);
-        return user;
+        return userRepository.findById(id).orElseThrow(() -> {
+            log.warn("FindById - no User found by id: {}", id);
+            return new UsernameNotFoundException("User not found");
+        });
     }
 
     @Override
     public List<User> getAll() {
         List<User> users = userRepository.findAll();
-        log.info("GetAll:  {} Users found", users.size());
+        log.info("GetAll: {} Users found", users.size());
         return users;
     }
 
@@ -48,7 +45,7 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         User user = userRepository.findByUserName(username);
         if (user == null) {
-            log.warn("FindByName - no User find by name: {}", username);
+            log.warn("FindByName - no User found by name: {}", username);
         }
         log.info("Find User by name: {}", username);
         return user;
@@ -56,11 +53,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByEmail(String email) {
-         Optional<User> user = userRepository.findByEmail(email);
-        if (user == null) {
-            log.warn("FindByName - no User find by name: {}", email);
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            log.warn("FindByEmail - no User found by email: {}", email);
         }
-        log.info("Find User by name: {}", email);
+        log.info("Find User by email: {}", email);
         return user;
     }
 
@@ -71,7 +68,7 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setRole(user.getRole());
         newUser.setStatus(Status.ACTIVE);
-        User registeredUser = userRepository.save(user);
+        User registeredUser = userRepository.save(newUser);
         log.info("Create - user: {} successfully registered", registeredUser);
         return registeredUser;
     }
@@ -87,7 +84,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            log.warn("DeleteById - no User find by id: {}", id);
+            log.warn("DeleteById - no User found by id: {}", id);
         } else {
             log.info("Delete User by id: {}", id);
             user.setStatus(Status.DELETED);

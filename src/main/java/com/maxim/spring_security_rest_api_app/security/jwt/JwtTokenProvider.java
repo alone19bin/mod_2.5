@@ -34,8 +34,9 @@ public class JwtTokenProvider {
     private long validityInMilliseconds;
 
     private final UserDetailsService userDetailsService;
+
     @Autowired
-    public JwtTokenProvider(/*@Lazy*/@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+    public JwtTokenProvider(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
@@ -49,7 +50,7 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String username, Role role) { //создание токена
+    public String createToken(String username, Role role) { // создание токена
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", role);
         Date now = new Date();
@@ -61,25 +62,21 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-    public Authentication getAuthentication(String token) { //аудентификация токена
+
+    public Authentication getAuthentication(String token) { // аутентификация токена
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {  //получение юзернама из токена
+    public String getUsername(String token) {  // получение username из токена
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest req) { //получение токена из запроса
+    public String resolveToken(HttpServletRequest req) { // получение токена из запроса
         return req.getHeader(authorizationHeader);
-//        String bearerToken = req.getHeader("Authorization");
-//        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-//            return bearerToken.substring(7, bearerToken.length());
-//        }
-//        return null;
     }
 
-    public boolean validateToken(String token) {  //валидация токена
+    public boolean validateToken(String token) {  // валидация токена
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             if (claims.getBody().getExpiration().before(new Date())) {
@@ -87,9 +84,10 @@ public class JwtTokenProvider {
             }
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid", HttpStatus.OK);
+            throw new JwtAuthenticationException("JWT token is expired or invalid", HttpStatus.UNAUTHORIZED);
         }
     }
+
     private List<String> getRoleNames(List<Role> userRoles) {
         List<String> result = new ArrayList<>();
         userRoles.forEach(role -> {
@@ -98,3 +96,4 @@ public class JwtTokenProvider {
         return result;
     }
 }
+

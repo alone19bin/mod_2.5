@@ -8,11 +8,6 @@ import org.springframework.security.core.AuthenticationException;
 public class JwtAuthenticationException extends AuthenticationException {
     private HttpStatus httpStatus;
 
-
-    public JwtAuthenticationException(String msg, int scUnauthorized) {
-        super(msg);
-    }
-
     public JwtAuthenticationException(String msg, HttpStatus httpStatus) {
         super(msg);
         this.httpStatus = httpStatus;
@@ -21,5 +16,5 @@ public class JwtAuthenticationException extends AuthenticationException {
     public JwtAuthenticationException(String msg) {
         super(msg);
     }
-
 }
+

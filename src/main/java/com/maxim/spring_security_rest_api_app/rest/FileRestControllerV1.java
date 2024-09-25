@@ -23,37 +23,12 @@ public class FileRestControllerV1 {
         this.fileService = fileService;
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<FileDto> getFileById(@PathVariable Long id) {
-//        File file = fileService.findById(id);
-//        if (file == null) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        FileDto resultFile = FileDto.fromFile(file);
-//        return new ResponseEntity<>(resultFile, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/{name}")
-//    public ResponseEntity<FileDto> getFileByName(@PathVariable String name) {
-//        File file = fileService.findByFileName(name);
-//        if (file == null) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        FileDto resultFile = FileDto.fromFile(file);
-//        return new ResponseEntity<>(resultFile, HttpStatus.OK);
-//    }
 
     @GetMapping
     public ResponseEntity<?> listFiles() {
         return ResponseEntity.ok(fileService.listFiles()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No file present in bucket")));
-//    public ResponseEntity<List<FileDto>> getAll() {
-//        List<File> files = fileService.listFiles();
-//        if (files.isEmpty()) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        List<FileDto> fileDtoList = FileDto.toFileDtos(files);
-//        return new ResponseEntity(fileDtoList, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
@@ -64,9 +39,6 @@ public class FileRestControllerV1 {
         fileService.deleteFile(fileName);
         return new ResponseEntity(fileName,HttpStatus.OK);
     }
-//    public ResponseEntity<?> deleteFile(@PathVariable("fileName") String fileName) {
-//        fileService.deleteFile(fileName);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     @PostMapping
     public ResponseEntity<FileDto> upload(@RequestBody @NonNull FileDto fileDto) {
@@ -88,9 +60,6 @@ public class FileRestControllerV1 {
         headers.add("Expires", "0");
         InputStreamResource resource = new InputStreamResource(fileService.download(fileDto.toFile()));
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-//                ResponseEntity.ok()
-//                .headers(headers)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(resource);
+
     }
 }

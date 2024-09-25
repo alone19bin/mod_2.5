@@ -33,15 +33,15 @@ public class FileServiceImpl implements FileService {
         this.s3client = s3client;
     }
 
-    public void createBucket() {
-        String bucketName = "expo600_bucket";
+/*    public void createBucket() {
+        String bucketName = "bucket";
 
         if (s3client.doesBucketExistV2(bucketName)) {
             log.info("Bucket {} already exists, use a different name", bucketName);
             return;
         }
         s3client.createBucket(bucketName);
-    }
+    }*/
 
     public void listBuckets(){
         List<Bucket> buckets = s3client.listBuckets();
@@ -52,7 +52,7 @@ public class FileServiceImpl implements FileService {
     @Override
     @SneakyThrows
     public void upload(File file) {
-        String bucketName = "expo600_bucket";
+        String bucketName = "bucket";
         java.io.File newFile = new java.io.File(file.getLocation());
         file.setCreated(LocalDateTime.now());
         log.info("File Uploaded {}", file.getFileName());
@@ -71,7 +71,7 @@ public class FileServiceImpl implements FileService {
     @Override
     @SneakyThrows
     public InputStream download(File file) {
-        String bucketName = "expo600_bucket";
+        String bucketName = "bucket";
         if (s3client.doesObjectExist(bucketName, file.getFileName())) {
             S3Object s3Object = s3client.getObject(bucketName, file.getFileName());
             log.info("File download {}", file.getFileName());
@@ -84,7 +84,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Optional<String> listFiles() {
-        String bucketName = "expo600_bucket";
+        String bucketName = "bucket";
         ObjectListing objectListing = s3client.listObjects(bucketName);
         if (objectListing != null) {
             log.info("All files in the bucket");
@@ -97,7 +97,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void deleteFile(String fileName) {
-        String bucketName = "expo600_bucket";
+        String bucketName = "bucket";
         s3client.deleteObject(bucketName, fileName);
         log.info("Deleting a File {}", fileName);
     }
