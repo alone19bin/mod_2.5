@@ -1,5 +1,3 @@
-
-
 CREATE TABLE IF NOT EXISTS users
 (
     id        BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -37,5 +35,4 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT fk_events_file_id FOREIGN KEY (file_id) REFERENCES files (id),
     UNIQUE (user_id, file_id)
 );
-
 

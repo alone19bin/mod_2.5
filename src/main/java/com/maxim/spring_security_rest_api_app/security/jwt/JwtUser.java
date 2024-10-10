@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-
 public class JwtUser implements UserDetails {
 
     private final Long id;
@@ -81,3 +80,4 @@ public class JwtUser implements UserDetails {
         return lastPasswordResetDate;
     }
 }
+

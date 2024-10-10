@@ -1,5 +1,6 @@
 package com.maxim.spring_security_rest_api_app.service.impl;
 
+import com.maxim.spring_security_rest_api_app.config.SecurityConfig;
 import com.maxim.spring_security_rest_api_app.model.Status;
 import com.maxim.spring_security_rest_api_app.model.User;
 import com.maxim.spring_security_rest_api_app.repository.UserRepository;
@@ -8,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +21,23 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Хешируем пароль перед сохранением
+        return userRepository.save(user);
+    }
+
+    public void register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Хеширование пароля
+        userRepository.save(user);
     }
 
     @Override
@@ -65,7 +79,8 @@ public class UserServiceImpl implements UserService {
     public User create(User user) {
         User newUser = new User();
         newUser.setUserName(user.getUserName());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setEmail(user.getEmail()); // добавляем email в сохранение
+        newUser.setPassword(passwordEncoder.encode(user.getPassword())); // хешируем пароль
         newUser.setRole(user.getRole());
         newUser.setStatus(Status.ACTIVE);
         User registeredUser = userRepository.save(newUser);
@@ -91,4 +106,26 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
     }
-}
+
+    @Override
+    public void hashPasswords() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            String currentPassword = user.getPassword();
+            //роверка, нужно ли хешировать пароль если он еще не хеширован
+            if (!isPasswordHashed(currentPassword)) {
+                user.setPassword(passwordEncoder.encode(currentPassword));  //Хешируем пароль
+                userRepository.save(user);          //Сохраняем обновленную запись
+            }
+        }
+    }
+
+    private boolean isPasswordHashed(String password) {
+        // Проверка на длину хешированного пароля
+        return password != null && password.length() > 70;
+    }
+    }
+
+
+
+

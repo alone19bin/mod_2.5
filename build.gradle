@@ -6,7 +6,7 @@ plugins {
 
 }
 
-group = 'com.ryzhov_andrei_spring'
+group = 'com.maxim.spring_security_rest_api_app'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -26,9 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'mysql:mysql-connector-java:8.0.32'
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-mysql'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     //зависимости для JJWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -37,7 +36,9 @@ dependencies {
     //      AWS SDKS3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
 
-
+    implementation 'org.springframework.boot:spring-boot-starter:3.1.0'
+    implementation 'org.flywaydb:flyway-core:9.16.3'
+    implementation 'mysql:mysql-connector-java:8.0.32'
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -46,6 +47,10 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+
+
+
 }
 
 
