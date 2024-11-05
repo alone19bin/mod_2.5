@@ -1,43 +1,43 @@
 package com.maxim.spring_security_rest_api_app.security;
 
 import com.maxim.spring_security_rest_api_app.model.User;
-import com.maxim.spring_security_rest_api_app.security.jwt.JwtUser;
+import com.maxim.spring_security_rest_api_app.repository.UserRepository;
 import com.maxim.spring_security_rest_api_app.security.jwt.JwtUserFactory;
-import com.maxim.spring_security_rest_api_app.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Lazy
+import java.util.Collection;
+import java.util.Collections;
+
 @Service
-@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(@Lazy UserService userService) {
-        this.userService = userService;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        //поиск пльзователя по email
-        User user = userService.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.error("User with email: {} not found", email);
-                    return new UsernameNotFoundException("User with email: " + email + " not found");
+                    log.error("User not found with email: {}", email);
+                    return new UsernameNotFoundException("User not found with email: " + email);
                 });
 
-        // Логируем успешную загрузку  пользователя
-        log.info("loadUserByUsername - user with email: {} successfully loaded", email);
-
-        // ссоздаем и возвращаем объект JwtUser
-        return JwtUserFactory.create(user);
+        log.info("User found: {}", user.getEmail());
+        return JwtUserFactory.create(user);         //Используем JwtUserFactory для создания JwtUser
     }
 }
 

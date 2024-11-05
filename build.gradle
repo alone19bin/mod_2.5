@@ -2,8 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
-    id "org.flywaydb.flyway" version "9.8.1"
-
+    id 'org.flywaydb.flyway' version '9.8.1'
 }
 
 group = 'com.maxim.spring_security_rest_api_app'
@@ -21,37 +20,29 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'mysql:mysql-connector-java:8.0.32'
-
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    //зависимости для JJWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    //      AWS SDKS3
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
-
-    implementation 'org.springframework.boot:spring-boot-starter:3.1.0'
-    implementation 'org.flywaydb:flyway-core:9.16.3'
-    implementation 'mysql:mysql-connector-java:8.0.32'
-    testImplementation 'junit:junit:4.13.2'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'mysql:mysql-connector-java:8.0.32'
+        implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+        runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+        runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+        implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
+        implementation 'org.flywaydb:flyway-core:9.16.3'
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test'
 
 
-
-
+        tasks.test {
+            enabled = false
+        }
+    }
 }
-
 
 

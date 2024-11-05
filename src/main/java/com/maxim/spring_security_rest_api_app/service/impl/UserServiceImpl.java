@@ -29,9 +29,24 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
+    public void hashPasswords() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            String rawPassword = user.getPassword();
+            if (rawPassword != null && !passwordEncoder.matches(rawPassword, user.getPassword())) {
+                String encodedPassword = passwordEncoder.encode(rawPassword);
+                log.info("User: {}, Raw Password: {}, Encoded Password: {}", user.getEmail(), rawPassword, encodedPassword);
+                user.setPassword(encodedPassword);
+                userRepository.save(user);
+            }
+        }
+    }
+
     public User saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Хешируем пароль перед сохранением
+        log.info("Raw password: {}", user.getPassword());
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        log.info("Hashed password: {}", hashedPassword);
+        user.setPassword(hashedPassword);
         return userRepository.save(user);
     }
 
@@ -107,24 +122,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void hashPasswords() {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            String currentPassword = user.getPassword();
-            //роверка, нужно ли хешировать пароль если он еще не хеширован
-            if (!isPasswordHashed(currentPassword)) {
-                user.setPassword(passwordEncoder.encode(currentPassword));  //Хешируем пароль
-                userRepository.save(user);          //Сохраняем обновленную запись
-            }
-        }
-    }
 
-    private boolean isPasswordHashed(String password) {
-        // Проверка на длину хешированного пароля
-        return password != null && password.length() > 70;
-    }
-    }
+}
+
 
 
 
